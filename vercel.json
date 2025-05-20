@@ -9,5 +9,11 @@
       "src": "public/datos.csv",
       "use": "@vercel/static"
     }
-    ]
-  }
+  ],
+  "routes": [
+    {
+      "src": "/datos.csv",
+      "dest": "/public/datos.csv"
+    }
+  ]
+}
