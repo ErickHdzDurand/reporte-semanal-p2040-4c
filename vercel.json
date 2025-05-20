@@ -2,25 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.htm",  // Punto de entrada principal
+      "src": "index.htm",
       "use": "@vercel/static"
     },
     {
-      "src": "public/datos.csv",  // Archivo estático en carpeta public
+      "src": "public/datos.csv",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
-      "src": "/",  // Redirige la raíz a tu index.htm
+      "src": "/",
       "dest": "/index.htm"
     },
     {
-      "src": "/public/(.*)",  // Permite acceso a archivos en /public/
+      "src": "/public/(.*)",
       "dest": "/public/$1"
     },
     {
-      "src": "/(.*)",  // Cualquier otra ruta fallida redirige a index.htm
+      "src": "/(.*)",
       "dest": "/index.htm"
     }
   ]
