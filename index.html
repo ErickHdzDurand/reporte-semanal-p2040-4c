@@ -1082,86 +1082,87 @@
         <td id="esp_consagracion_var_S26"></td>
         <td id="esp_consagracion_var_S27"></td>
       </tr>
-    
   </tbody>
 </table>
 
 <script>
-  function toggleMes(mes) {
-    document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
-      celda.classList.toggle('hidden');
+fetch("/datos.csv")
+  .then(response => response.text())
+  .then(text => {
+    const lines = text.trim().split("\n");
+    const headers = lines[0].split(",");
+    const idIndex = headers.indexOf("indicador_id");
+    const valueIndex = headers.indexOf("valor");
+
+    lines.slice(1).forEach(row => {
+      const cols = row.split(",");
+      const id = cols[idIndex];
+      const valor = cols[valueIndex];
+
+      const celda = document.getElementById(id);
+      if (celda) {
+        celda.innerText = valor;
+
+        // ✅ Semáforo por porcentaje
+        if (id.includes("pct")) {
+          const pct = parseFloat(valor);
+          if (!isNaN(pct)) {
+            if (pct >= 80) celda.classList.add("semaforo-verde");
+            else if (pct >= 60) celda.classList.add("semaforo-amarillo");
+            else celda.classList.add("semaforo-rojo");
+          }
+        }
+
+        // ✅ Estilo para total P2040
+        if (id.toLowerCase().includes("total_p2040")) {
+          celda.classList.add("total-p2040");
+        }
+      }
     });
-  }
-
-  function getWeekFromDate(fecha) {
-    const [year, month, day] = fecha.split('-').map(Number);
-    const date = new Date(year, month - 1, day);
-    const startOfYear = new Date(date.getFullYear(), 0, 1);
-    const days = Math.floor((date - startOfYear) / (24 * 60 * 60 * 1000));
-    return 'S' + Math.ceil((days + startOfYear.getDay() + 1) / 7).toString().padStart(2, '0');
-  }
-
-  const fechaActual = new Date().toISOString().split('T')[0];
-  const semanaActual = parseInt(getWeekFromDate(fechaActual).replace('S', ''), 10);
-
-  // 🔒 Oculta automáticamente semanas futuras
-  document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
-    const match = celda.id.match(/_S(\d{2})$/);
-    if (match) {
-      const semana = parseInt(match[1], 10);
-      if (semana > semanaActual) {
-        celda.classList.add('hidden');
-      }
-    }
-  });
-
-  // 🔓 Muestra los headers de semanas transcurridas
-  document.querySelectorAll('[class*="semana-"]').forEach(celda => {
-    const semanaNum = parseInt((celda.textContent || 'S00').replace('S', ''), 10);
-    if (semanaNum <= semanaActual) {
-      celda.classList.remove('hidden');
-    }
-  });
-
-  // 🎯 Toggle manual al dar clic en el header del mes
-  document.querySelectorAll('th[data-mes]').forEach(header => {
-    header.addEventListener('click', () => toggleMes(header.dataset.mes));
-  });
-  
-    Object.entries(window.reporteData).forEach(([id, value]) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.textContent = value;
-    }
-  });
-
-  // 🔁 Reemplazado por Node.js
-  window.reporteData = {};
-  
-  // 🧠 Llenar celdas
-  try {
-  Object.entries(window.reporteData).forEach(([key, value]) => {
-    const celda = document.getElementById(key);
-    if (celda) {
-      celda.textContent = value;
-      if (key.includes('pct')) {
-        if (value >= 80) celda.classList.add('semaforo-verde');
-        else if (value >= 60) celda.classList.add('semaforo-amarillo');
-        else celda.classList.add('semaforo-rojo');
-      }
-      if (key.toLowerCase().includes('total_p2040')) {
-        celda.classList.add('total-p2040');
-      }
-    } else {
-      console.warn('ID no encontrado:', key);
-    }
-  });
-  // Mostrar mensaje de éxito
-  console.log('Datos cargados correctamente');
-} catch (error) {
-  console.error('Error al cargar datos:', error);
-}
+  })
+  .catch(error => console.error("❌ Error cargando CSV:", error));
 </script>
 
+<script>
+function toggleMes(mes) {
+  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
+    celda.classList.toggle('hidden');
+  });
+}
 
+function getWeekFromDate(fecha) {
+  const [year, month, day] = fecha.split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+  const startOfYear = new Date(date.getFullYear(), 0, 1);
+  const days = Math.floor((date - startOfYear) / (24 * 60 * 60 * 1000));
+  return 'S' + Math.ceil((days + startOfYear.getDay() + 1) / 7).toString().padStart(2, '0');
+}
 
+const fechaActual = new Date().toISOString().split('T')[0];
+const semanaActual = parseInt(getWeekFromDate(fechaActual).replace('S', ''), 10);
+
+// 🔒 Oculta semanas futuras automáticamente
+document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
+  const match = celda.id.match(/_S(\d{2})$/);
+  if (match) {
+    const semana = parseInt(match[1], 10);
+    if (semana > semanaActual) {
+      celda.classList.add('hidden');
+    }
+  }
+});
+
+// 🔓 Muestra encabezados de semanas ya transcurridas
+document.querySelectorAll('[class*="semana-"]').forEach(celda => {
+  const semanaNum = parseInt((celda.textContent || 'S00').replace('S', ''), 10);
+  if (semanaNum <= semanaActual) {
+    celda.classList.remove('hidden');
+  }
+});
+
+// 🎯 Alternar semanas por mes
+document.querySelectorAll('th[data-mes]').forEach(header => {
+  header.addEventListener('click', () => toggleMes(header.dataset.mes));
+});
+</script>
+</body>
