@@ -1086,7 +1086,7 @@
 </table>
 
 <script>
-fetch("/public/datos.csv")
+fetch("/datos.csv")
   .then(response => response.text())
   .then(text => {
     const lines = text.trim().split("\n");
