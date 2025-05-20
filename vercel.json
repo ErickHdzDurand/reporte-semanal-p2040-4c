@@ -2,26 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.htm",
+      "src": "**/*.html",
       "use": "@vercel/static"
     },
     {
-      "src": "public/datos.csv",
+      "src": "public/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/",
-      "dest": "/index.htm"
-    },
-    {
-      "src": "/public/(.*)",
-      "dest": "/public/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.htm"
-    }
+    { "src": "/", "dest": "/index.htm" },
+    { "src": "/public/(.*)", "dest": "/public/$1" },
+    { "src": "/(.*)", "status": 404, "dest": "/404.html" },
+    { "src": "/(.*)", "dest": "/index.htm" }
   ]
 }
