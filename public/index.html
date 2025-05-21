@@ -1100,7 +1100,7 @@
   </tbody>
 </table>
 
-<!-- ✅ Banner si CSV está desactualizado  Marca Para saber si es actual 1 pm 21052025-->
+<!-- ✅ Banner si CSV está desactualizado  -->
 <script>
 const diasLimite = 7;
 fetch('/datos_iso_4c.csv', { method: 'HEAD' })
@@ -1231,7 +1231,7 @@ function toggleMes(mes) {
     celda.classList.toggle('hidden');
   });
 }
-// 🎯 Alternar semanas por mes
+// 🎯 Alternar semanas por mes  
 document.querySelectorAll('th[data-mes]').forEach(header => {
   header.addEventListener('click', () => toggleMes(header.dataset.mes));
 });
@@ -1243,6 +1243,9 @@ document.querySelectorAll('th[data-mes]').forEach(header => {
   .verde { color: green; font-weight: bold; }
 </style>
 </head>
+<!-- 🧪 Commit técnico: Versión /public -->
+</body>
+</html>
 
 </body>
 </html>
