@@ -3,17 +3,13 @@
   "builds": [
     {
       "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/datos_ordinarios_4c.csv",
-      "use": "@vercel/static"
-    }
-  ],
+        "use": "@vercel/static"
+      }
+    ],
   "routes": [
     {
-      "src": "/datos_ordinarios_4c.csv",
-      "dest": "/public/datos_ordinarios_4c.csv"
+      "src": "/datos_iso_4c.csv",
+      "dest": "/public/datos_iso_4c.csv"
     }
   ]
 }
