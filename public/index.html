@@ -1103,13 +1103,12 @@
 <!-- ✅ Banner si CSV está desactualizado  -->
 <script>
 const diasLimite = 7;
-fetch('/public/datos_iso_4c.csv', { method: 'HEAD' })
+fetch('/datos_iso_4c.csv', { method: 'HEAD' })
   .then(res => {
     const fechaStr = res.headers.get('last-modified');
     const fechaMod = new Date(fechaStr);
     const hoy = new Date();
     const diasPasados = Math.floor((hoy - fechaMod) / (1000 * 60 * 60 * 24));
-
     if (diasPasados > diasLimite - 2) {
       const banner = document.createElement('div');
       banner.style = `
@@ -1131,116 +1130,111 @@ fetch('/public/datos_iso_4c.csv', { method: 'HEAD' })
   .catch(err => {
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
-</script>
-<!-- ✅ HTML con fetch adaptado y lógica para % y semáforo de variación Datos Public Fetch Public -->
-<script>
-fetch('/public/datos_iso_4c.csv')
-  .then(response => {
-    if (!response.ok) throw new Error("Archivo CSV no disponible");
-    return response.text();
-  })
-  .then(text => {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-    const idIndex = headers.indexOf("indicador_id");
-    const valueIndex = headers.indexOf("valor");
 
-    const datosMap = new Map();
+document.addEventListener('DOMContentLoaded', function() {
+  // Calcular semana actual
+  const today = new Date();
+  const dia = today.getDate();
+  const semanaActual = Math.ceil(dia / 7);
 
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      const indicadorID = cols[idIndex];
-      let valor = parseFloat(cols[valueIndex]);
-      let display = valor;
-      let clase = '';
-    // ✅ Estilo para % 
-      if (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var")) {
-        display = valor.toFixed(1) + '%';
-      }
-    // ✅ Estilo para variavles 
-      if (indicadorID.toLowerCase().includes("var")) {
-        if (valor < 0) clase = 'rojo';
-        else if (valor === 0) clase = 'amarillo';
-        else if (valor > 0.1) clase = 'verde';
-      }
+  fetch('/datos_iso_4c.csv')
+    .then(response => {
+      if (!response.ok) throw new Error("Archivo CSV no disponible");
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const idIndex = headers.indexOf("indicador_id");
+      const valueIndex = headers.indexOf("valor");
+      const datosMap = new Map();
 
-      datosMap.set(indicadorID, display);
-      const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
-      targets.forEach(el => {
-        el.textContent = display;
-        if (clase) el.classList.add(clase);
-      });
-    }
-
-    // ✅ Ocultar encabezados mensuales si todas sus semanas están vacías
-    const meses = ['abr', 'may', 'jun', 'jul', 'ago'];
-    meses.forEach(mes => {
-      const semanas = document.querySelectorAll(`.semana-${mes}[data-id]`);
-      const algunaConDatos = Array.from(semanas).some(el => el.textContent.trim() !== '');
-
-      const thMes = document.querySelector(`th[data-mes="${mes}"]`);
-      if (thMes) thMes.style.display = algunaConDatos ? '' : 'none';
-
-      semanas.forEach(sem => {
-        sem.style.display = algunaConDatos ? '' : 'none';
-      });
-    });
-
-    // ✅ Ocultar celdas vacías sin valor
-    document.querySelectorAll('td[data-id]').forEach(td => {
-      if (td.textContent.trim() === '') {
-        td.style.display = 'none';
-      }
-    });
-    // 🔒 Oculta semanas futuras automáticamente
-    document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
-      const match = celda.id.match(/_S(\d{2})$/);
-      if (match) {
-        const semana = parseInt(match[1], 10);
-        if (semana > semanaActual) {
-          celda.classList.add('hidden');
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        const indicadorID = cols[idIndex];
+        let valor = parseFloat(cols[valueIndex]);
+        let display = valor;
+        let clase = '';
+        if (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var")) {
+          display = valor.toFixed(1) + '%';
         }
+        if (indicadorID.toLowerCase().includes("var")) {
+          if (valor < 0) clase = 'rojo';
+          else if (valor === 0) clase = 'amarillo';
+          else if (valor > 0.1) clase = 'verde';
+        }
+        datosMap.set(indicadorID, display);
+        const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+        targets.forEach(el => {
+          el.textContent = display;
+          if (clase) el.classList.add(clase);
+        });
       }
+
+      // Ocultar encabezados mensuales si todas sus semanas están vacías
+      const meses = ['abr', 'may', 'jun', 'jul', 'ago'];
+      meses.forEach(mes => {
+        const semanas = document.querySelectorAll(`.semana-${mes}[data-id]`);
+        const algunaConDatos = Array.from(semanas).some(el => el.textContent.trim() !== '');
+        const thMes = document.querySelector(`th[data-mes="${mes}"]`);
+        if (thMes) thMes.style.display = algunaConDatos ? '' : 'none';
+        semanas.forEach(sem => {
+          sem.style.display = algunaConDatos ? '' : 'none';
+        });
+      });
+
+      // Ocultar celdas vacías sin valor
+      document.querySelectorAll('td[data-id]').forEach(td => {
+        if (td.textContent.trim() === '') {
+          td.style.display = 'none';
+        }
+      });
+
+      // Oculta semanas futuras automáticamente
+      document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
+        const match = celda.id.match(/_S(\d{2})$/);
+        if (match) {
+          const semana = parseInt(match[1], 10);
+          if (semana > semanaActual) {
+            celda.classList.add('hidden');
+          }
+        }
+      });
+
+      // Mostrar semana actual en encabezado
+      const label = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
+      const target = document.getElementById('semana_actual');
+      if (target) target.textContent = label;
+    })
+    .catch(err => {
+      document.body.innerHTML += `<p style="color:red;">❌ Error al cargar CSV: ${err.message}</p>`;
+      console.error("Error en fetch:", err);
     });
-    // ✅ Mostrar semana actual en encabezado
-    const today = new Date();
-    const dia = today.getDate();
-    const mes = today.toLocaleString('es-MX', { month: 'short' }).toLowerCase();
-    const semana = Math.ceil(dia / 7);
-    const label = `Semana actual: S0${semana} (${today.toLocaleDateString('es-MX')})`;
 
-    const target = document.getElementById('semana_actual');
-    if (target) target.textContent = label;
-  })
-  .catch(err => {
-    document.body.innerHTML += `<p style=\"color:red;\">❌ Error al cargar CSV: ${err.message}</p>`;
-    console.error("Error en fetch:", err);
+  // Mostrar encabezados de semanas ya transcurridas
+  document.querySelectorAll('[class*="semana-"]').forEach(celda => {
+    const semanaNum = parseInt((celda.textContent || 'S00').replace('S', ''), 10);
+    if (semanaNum <= semanaActual) {
+      celda.classList.remove('hidden');
+    }
   });
-// 🔓 Muestra encabezados de semanas ya transcurridas
-document.querySelectorAll('[class*="semana-"]').forEach(celda => {
-  const semanaNum = parseInt((celda.textContent || 'S00').replace('S', ''), 10);
-  if (semanaNum <= semanaActual) {
-    celda.classList.remove('hidden');
+
+  // Toggle por mes
+  function toggleMes(mes) {
+    document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
+      celda.classList.toggle('hidden');
+    });
   }
-});
-
-
-<!-- ✅ Toggle por mes -->
-function toggleMes(mes) {
-  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
-    celda.classList.toggle('hidden');
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', () => toggleMes(header.dataset.mes));
   });
-}
-// 🎯 Alternar semanas por mes  
-document.querySelectorAll('th[data-mes]').forEach(header => {
-  header.addEventListener('click', () => toggleMes(header.dataset.mes));
 });
-
 </script>
 <style>
   .rojo { color: red; font-weight: bold; }
   .amarillo { color: orange; font-weight: bold; }
   .verde { color: green; font-weight: bold; }
+  .hidden { display: none; }
 </style>
 </head>
 <!-- 🧪 Commit técnico: Versión /public -->
