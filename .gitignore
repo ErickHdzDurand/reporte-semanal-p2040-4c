@@ -1,0 +1,25 @@
+# ✅ .gitignore para proyecto Reporte Semanal 2040
+# Excluir todo lo innecesario, pero mantener el CSV actual
+
+# Archivos temporales
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+
+# node y vercel
+node_modules/
+.vercel/cache/
+
+# Evita ignorar el CSV del dashboard (¡muy importante!)
+!public/datos_ordinarios_4c.csv
+
+# Archivos antiguos de pruebas CSV (si decides excluir versiones previas)
+public/datos_ordinarios_4c_*.csv
+!public/datos_ordinarios_4c.csv
+
+# Archivos de sistema
+.vscode/
+.idea/
+.env
+*.bak
