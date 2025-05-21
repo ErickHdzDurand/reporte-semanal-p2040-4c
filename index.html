@@ -1103,7 +1103,7 @@
 <!-- ✅ Banner si CSV está desactualizado  Marca Para saber si es actual 1 pm 21052025-->
 <script>
 const diasLimite = 7;
-fetch('/datos_iso_4c.csv', { method: 'HEAD' })
+fetch('/public/datos_iso_4c.csv', { method: 'HEAD' })
   .then(res => {
     const fechaStr = res.headers.get('last-modified');
     const fechaMod = new Date(fechaStr);
