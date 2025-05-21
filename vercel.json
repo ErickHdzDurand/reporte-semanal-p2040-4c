@@ -2,7 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
+      "src": "public/index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "public/datos_iso_4c.csv",
       "use": "@vercel/static"
     }
   ],

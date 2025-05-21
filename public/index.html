@@ -1132,9 +1132,9 @@ fetch('/public/datos_iso_4c.csv', { method: 'HEAD' })
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
 </script>
-<!-- ✅ HTML con fetch adaptado y lógica para % y semáforo de variación -->
+<!-- ✅ HTML con fetch adaptado y lógica para % y semáforo de variación Datos Public Fetch Public -->
 <script>
-fetch('/datos_iso_4c.csv')
+fetch('/public/datos_iso_4c.csv')
   .then(response => {
     if (!response.ok) throw new Error("Archivo CSV no disponible");
     return response.text();
