@@ -236,22 +236,22 @@
     <tr>
       <td rowspan="4">VISITA MAMÁS EMBARAZADAS</td>
       <td>TOTAL P2040</td>
-    <td data-id="V_E_U2040_abr25"></td>
-    <td data-id="V_E_U2040_S15"></td>
-    <td data-id="V_E_U2040_S16"></td>
-    <td data-id="V_E_U2040_S17"></td>
-    <td data-id="V_E_U2040_S18"></td>
-    <td data-id="V_E_U2040_may25"></td>
-    <td data-id="V_E_U2040_S19"></td>
-    <td data-id="V_E_U2040_S20"></td>
-    <td data-id="V_E_U2040_S21"></td>
-    <td data-id="V_E_U2040_S22"></td>
-    <td data-id="V_E_U2040_jun25"></td>
-    <td data-id="V_E_U2040_S23"></td>
-    <td data-id="V_E_U2040_S24"></td>
-    <td data-id="V_E_U2040_S25"></td>
-    <td data-id="V_E_U2040_S26"></td>
-    <td data-id="V_E_U2040_S27"></td>
+      <td data-id="V_p2040_abr-25"></td>
+      <td data-id="V_p2040_S15"></td>
+      <td data-id="V_p2040_S16"></td>
+      <td data-id="V_p2040_S17"></td>
+      <td data-id="V_p2040_S18"></td>
+      <td data-id="V_p2040_may-25"></td>
+      <td data-id="V_p2040_S19"></td>
+      <td data-id="V_p2040_S20"></td>
+      <td data-id="V_p2040_S21"></td>
+      <td data-id="V_p2040_S22"></td>
+      <td data-id="V_p2040_jun-25"></td>
+      <td data-id="V_p2040_S23"></td>
+      <td data-id="V_p2040_S24"></td>
+      <td data-id="V_p2040_S25"></td>
+      <td data-id="V_p2040_S26"></td>
+      <td data-id="V_p2040_S27"></td>
     </tr>
     <tr>
       <td>P2040</td>
@@ -1132,7 +1132,6 @@ fetch('/datos_iso_4c.csv', { method: 'HEAD' })
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
 </script>
-
 <!-- ✅ HTML con fetch adaptado y lógica para % y semáforo de variación -->
 <script>
 fetch('/datos_iso_4c.csv')
@@ -1154,11 +1153,11 @@ fetch('/datos_iso_4c.csv')
       let valor = parseFloat(cols[valueIndex]);
       let display = valor;
       let clase = '';
-
+    // ✅ Estilo para % 
       if (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var")) {
         display = valor.toFixed(1) + '%';
       }
-
+    // ✅ Estilo para variavles 
       if (indicadorID.toLowerCase().includes("var")) {
         if (valor < 0) clase = 'rojo';
         else if (valor === 0) clase = 'amarillo';
@@ -1193,7 +1192,16 @@ fetch('/datos_iso_4c.csv')
         td.style.display = 'none';
       }
     });
-
+    // 🔒 Oculta semanas futuras automáticamente
+    document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
+      const match = celda.id.match(/_S(\d{2})$/);
+      if (match) {
+        const semana = parseInt(match[1], 10);
+        if (semana > semanaActual) {
+          celda.classList.add('hidden');
+        }
+      }
+    });
     // ✅ Mostrar semana actual en encabezado
     const today = new Date();
     const dia = today.getDate();
@@ -1208,27 +1216,33 @@ fetch('/datos_iso_4c.csv')
     document.body.innerHTML += `<p style=\"color:red;\">❌ Error al cargar CSV: ${err.message}</p>`;
     console.error("Error en fetch:", err);
   });
-</script>
+// 🔓 Muestra encabezados de semanas ya transcurridas
+document.querySelectorAll('[class*="semana-"]').forEach(celda => {
+  const semanaNum = parseInt((celda.textContent || 'S00').replace('S', ''), 10);
+  if (semanaNum <= semanaActual) {
+    celda.classList.remove('hidden');
+  }
+});
+
 
 <!-- ✅ Toggle por mes -->
-<script>
 function toggleMes(mes) {
   document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
     celda.classList.toggle('hidden');
   });
 }
-
+// 🎯 Alternar semanas por mes
 document.querySelectorAll('th[data-mes]').forEach(header => {
   header.addEventListener('click', () => toggleMes(header.dataset.mes));
 });
-</script>
 
+</script>
 <style>
   .rojo { color: red; font-weight: bold; }
   .amarillo { color: orange; font-weight: bold; }
   .verde { color: green; font-weight: bold; }
 </style>
 </head>
-</script>
+
 </body>
 </html>
