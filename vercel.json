@@ -1,8 +1,9 @@
 {
   "version": 2,
+  "public": true,
   "builds": [
     {
-      "src": "index.html",
+      "src": "public/index.html",
       "use": "@vercel/static"
     },
     {
@@ -15,6 +16,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
     {
       "src": "/datos_iso_4c.csv",
       "dest": "/public/datos_iso_4c.csv"
