@@ -3,7 +3,7 @@
   "public": true,
   "builds": [
     {
-      "src": "public/index.html",
+      "src": "index.html",
       "use": "@vercel/static"
     },
     {
@@ -17,16 +17,12 @@
   ],
   "routes": [
     {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
       "src": "/datos_indicadores_4c.csv",
-      "dest": "/public/datos_iso_4c.csv"
+      "dest": "/public/datos_indicadores_4c.csv"
     },
     {
       "src": "/datos_vacunacion_4c.csv",
-      "dest": "/public/datos_educacion_4c.csv"
+      "dest": "/public/datos_vacunacion_4c.csv"
     }
   ]
 }
