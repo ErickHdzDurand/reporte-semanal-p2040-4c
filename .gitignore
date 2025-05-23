@@ -23,3 +23,12 @@ public/datos_ordinarios_4c_*.csv
 .idea/
 .env
 *.bak
+
+
+Backup2/
+Backups/
+*.txt
+*.csv~
+*.bak
+.DS_Store
+Thumbs.db
