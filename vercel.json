@@ -1,32 +1,9 @@
 {
   "version": 2,
-  "public": true,
   "builds": [
     {
-      "src": "public/index.html",
+      "src": "public/**",
       "use": "@vercel/static"
-    },
-    {
-      "src": "public/datos_indicadores_4c.csv",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/datos_vacunacion_4c.csv",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/datos_indicadores_4c.csv",
-      "dest": "/public/datos_combinado_4c.csv"
-    },
-    {
-      "src": "/datos_vacunacion_4c.csv",
-      "dest": "/public/datos_vacunacion_4c.csv"
     }
   ]
 }
