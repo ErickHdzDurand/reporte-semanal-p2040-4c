@@ -69,6 +69,31 @@
 }
   </style>
 </head>
+<!-- ✅ Sticky fix y toggle por mes -->
+<script>
+function toggleMes(mes) {
+  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
+    celda.classList.toggle('hidden');
+  });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', () => toggleMes(header.dataset.mes));
+  });
+});
+</script>
+
+<style>
+thead th {
+  position: sticky;
+  top: 0;
+  background: black;
+  color: white;
+  z-index: 1000;
+}
+</style>
+
 <body>
 
 <h3 id="semana_actual"></h3>
@@ -385,9 +410,8 @@
       <td data-id="V_E_total_S35"></td>
       <td data-id="V_E_total_S36"></td>
       <td data-id="V_E_total_S37"></td>
-        </tr>
-
-        <tr>
+    </tr>
+    <tr>
       <td>%F2040</td>
       <td data-id="V_E_percent_abr25"></td>
       <td data-id="V_E_percent_S14"></td>
@@ -529,9 +553,8 @@
         <td data-id="juf_suenos_total_S35"></td>
         <td data-id="juf_suenos_total_S36"></td>
         <td data-id="juf_suenos_total_S37"></td>
-            </tr>
-
-            <tr>
+      </tr>
+      <tr>
         <td>%P2040</td>
         <!-- ABRIL -->
         <td data-id="juf_suenos_pct_abr25"></td>
@@ -567,8 +590,8 @@
         <td data-id="juf_suenos_pct_S35"></td>
         <td data-id="juf_suenos_pct_S36"></td>
         <td data-id="juf_suenos_pct_S37"></td>
-            </tr>
-        <td>VARIACIÓN</td>
+       </tr>
+       <td>VARIACIÓN</td>
         <td data-id="juf_suenos_var_abr25"></td>
         <td data-id="juf_suenos_var_S14"></td>
         <td data-id="juf_suenos_var_S15"></td>
@@ -600,8 +623,8 @@
         <td data-id="juf_suenos_var_S35"></td>
         <td data-id="juf_suenos_var_S36"></td>
         <td data-id="juf_suenos_var_S37"></td>
-            </tr>
-            <tr>
+      </tr>
+      <tr>
         <td rowspan="4">REGISTRO CIVIL</td>
         <td>TOTAL P2040</td>
         <!-- ABRIL -->
@@ -638,8 +661,8 @@
         <td data-id="U2040_S35"></td>
         <td data-id="U2040_S36"></td>
         <td data-id="U2040_S37"></td>
-            </tr>
-            <tr>
+        </tr>
+        <tr>
         <td>P2040</td>
         <!-- ABRIL -->
         <td data-id="juf_regcivil_total_abr25"></td>
@@ -749,82 +772,8 @@
         <td data-id="p_juf_regcivil_var_S35"></td>
         <td data-id="p_juf_regcivil_var_S36"></td>
         <td data-id="p_juf_regcivil_var_S37"></td>
-            </tr>
-        <td>%P2040</td>
-        <!-- ABRIL -->
-        <td data-id="p_juf_regcivil_pct_abr25"></td>
-        <td data-id="p_juf_regcivil_pct_S14"></td>
-        <td data-id="p_juf_regcivil_pct_S15"></td>
-        <td data-id="p_juf_regcivil_pct_S16"></td>
-        <td data-id="p_juf_regcivil_pct_S17"></td>
-        <td data-id="p_juf_regcivil_pct_S18"></td>
-        <!-- MAYO -->
-        <td data-id="p_juf_regcivil_pct_may25"></td>
-        <td data-id="p_juf_regcivil_pct_S19"></td>
-        <td data-id="p_juf_regcivil_pct_S20"></td>
-        <td data-id="p_juf_regcivil_pct_S21"></td>
-        <td data-id="p_juf_regcivil_pct_S22"></td>
-        <!-- JUNIO -->
-        <td data-id="p_juf_regcivil_pct_jun25"></td>
-        <td data-id="p_juf_regcivil_pct_S23"></td>
-        <td data-id="p_juf_regcivil_pct_S24"></td>
-        <td data-id="p_juf_regcivil_pct_S25"></td>
-        <td data-id="p_juf_regcivil_pct_S26"></td>
-        <td data-id="p_juf_regcivil_pct_S27"></td>
-        <!-- JULIO -->
-        <td data-id="p_juf_regcivil_pct_jul25"></td>
-        <td data-id="p_juf_regcivil_pct_S28"></td>
-        <td data-id="p_juf_regcivil_pct_S29"></td>
-        <td data-id="p_juf_regcivil_pct_S30"></td>
-        <td data-id="p_juf_regcivil_pct_S31"></td>
-        <td data-id="p_juf_regcivil_pct_S32"></td>
-        <!-- AGOSTO -->
-        <td data-id="p_juf_regcivil_pct_ago25"></td>
-        <td data-id="p_juf_regcivil_pct_S33"></td>
-        <td data-id="p_juf_regcivil_pct_S34"></td>
-        <td data-id="p_juf_regcivil_pct_S35"></td>
-        <td data-id="p_juf_regcivil_pct_S36"></td>
-        <td data-id="p_juf_regcivil_pct_S37"></td>
-            </tr>
-            <tr>
-        <td>VARIACIÓN</td>
-        <!-- ABRIL -->
-        <td data-id="p_juf_regcivil_var_abr25"></td>
-        <td data-id="p_juf_regcivil_var_S14"></td>
-        <td data-id="p_juf_regcivil_var_S15"></td>
-        <td data-id="p_juf_regcivil_var_S16"></td>
-        <td data-id="p_juf_regcivil_var_S17"></td>
-        <td data-id="p_juf_regcivil_var_S18"></td>
-        <!-- MAYO -->
-        <td data-id="p_juf_regcivil_var_may25"></td>
-        <td data-id="p_juf_regcivil_var_S19"></td>
-        <td data-id="p_juf_regcivil_var_S20"></td>
-        <td data-id="p_juf_regcivil_var_S21"></td>
-        <td data-id="p_juf_regcivil_var_S22"></td>
-        <!-- JUNIO -->
-        <td data-id="p_juf_regcivil_var_jun25"></td>
-        <td data-id="p_juf_regcivil_var_S23"></td>
-        <td data-id="p_juf_regcivil_var_S24"></td>
-        <td data-id="p_juf_regcivil_var_S25"></td>
-        <td data-id="p_juf_regcivil_var_S26"></td>
-        <td data-id="p_juf_regcivil_var_S27"></td>
-        <!-- JULIO -->
-        <td data-id="p_juf_regcivil_var_jul25"></td>
-        <td data-id="p_juf_regcivil_var_S28"></td>
-        <td data-id="p_juf_regcivil_var_S29"></td>
-        <td data-id="p_juf_regcivil_var_S30"></td>
-        <td data-id="p_juf_regcivil_var_S31"></td>
-        <td data-id="p_juf_regcivil_var_S32"></td>
-        <!-- AGOSTO -->
-        <td data-id="p_juf_regcivil_var_ago25"></td>
-        <td data-id="p_juf_regcivil_var_S33"></td>
-        <td data-id="p_juf_regcivil_var_S34"></td>
-        <td data-id="p_juf_regcivil_var_S35"></td>
-        <td data-id="p_juf_regcivil_var_S36"></td>
-        <td data-id="p_juf_regcivil_var_S37"></td>
-            </tr>
-
-            <tr>
+      </tr>
+      <tr>
         <td rowspan="16">SALUD</td>
         <td rowspan="4">*ESQUEMA DE VACUNACIÓN<n></n></td>
         <td>TOTAL P2040</td>
@@ -1404,118 +1353,8 @@
         <td data-id="salud_fuera_var_S36"></td>
         <td data-id="salud_fuera_var_S37"></td>
       </tr>
-        <td>P2040</td>
-        <!-- ABRIL -->
-        <td data-id="salud_fuera_total_abr25"></td>
-        <td data-id="salud_fuera_total_S14"></td>
-        <td data-id="salud_fuera_total_S15"></td>
-        <td data-id="salud_fuera_total_S16"></td>
-        <td data-id="salud_fuera_total_S17"></td>
-        <td data-id="salud_fuera_total_S18"></td>
-        <!-- MAYO -->
-        <td data-id="salud_fuera_total_may25"></td>
-        <td data-id="salud_fuera_total_S19"></td>
-        <td data-id="salud_fuera_total_S20"></td>
-        <td data-id="salud_fuera_total_S21"></td>
-        <td data-id="salud_fuera_total_S22"></td>
-        <!-- JUNIO -->
-        <td data-id="salud_fuera_total_jun25"></td>
-        <td data-id="salud_fuera_total_S23"></td>
-        <td data-id="salud_fuera_total_S24"></td>
-        <td data-id="salud_fuera_total_S25"></td>
-        <td data-id="salud_fuera_total_S26"></td>
-        <td data-id="salud_fuera_total_S27"></td>
-        <!-- JULIO -->
-        <td data-id="salud_fuera_total_jul25"></td>
-        <td data-id="salud_fuera_total_S28"></td>
-        <td data-id="salud_fuera_total_S29"></td>
-        <td data-id="salud_fuera_total_S30"></td>
-        <td data-id="salud_fuera_total_S31"></td>
-        <td data-id="salud_fuera_total_S32"></td>
-        <!-- AGOSTO -->
-        <td data-id="salud_fuera_total_ago25"></td>
-        <td data-id="salud_fuera_total_S33"></td>
-        <td data-id="salud_fuera_total_S34"></td>
-        <td data-id="salud_fuera_total_S35"></td>
-        <td data-id="salud_fuera_total_S36"></td>
-        <td data-id="salud_fuera_total_S37"></td>
-            </tr>
-            <tr>
-        <td>%P2040</td>
-        <!-- ABRIL -->
-        <td data-id="salud_fuera_pct_abr25"></td>
-        <td data-id="salud_fuera_pct_S14"></td>
-        <td data-id="salud_fuera_pct_S15"></td>
-        <td data-id="salud_fuera_pct_S16"></td>
-        <td data-id="salud_fuera_pct_S17"></td>
-        <td data-id="salud_fuera_pct_S18"></td>
-        <!-- MAYO -->
-        <td data-id="salud_fuera_pct_may25"></td>
-        <td data-id="salud_fuera_pct_S19"></td>
-        <td data-id="salud_fuera_pct_S20"></td>
-        <td data-id="salud_fuera_pct_S21"></td>
-        <td data-id="salud_fuera_pct_S22"></td>
-        <!-- JUNIO -->
-        <td data-id="salud_fuera_pct_jun25"></td>
-        <td data-id="salud_fuera_pct_S23"></td>
-        <td data-id="salud_fuera_pct_S24"></td>
-        <td data-id="salud_fuera_pct_S25"></td>
-        <td data-id="salud_fuera_pct_S26"></td>
-        <td data-id="salud_fuera_pct_S27"></td>
-        <!-- JULIO -->
-        <td data-id="salud_fuera_pct_jul25"></td>
-        <td data-id="salud_fuera_pct_S28"></td>
-        <td data-id="salud_fuera_pct_S29"></td>
-        <td data-id="salud_fuera_pct_S30"></td>
-        <td data-id="salud_fuera_pct_S31"></td>
-        <td data-id="salud_fuera_pct_S32"></td>
-        <!-- AGOSTO -->
-        <td data-id="salud_fuera_pct_ago25"></td>
-        <td data-id="salud_fuera_pct_S33"></td>
-        <td data-id="salud_fuera_pct_S34"></td>
-        <td data-id="salud_fuera_pct_S35"></td>
-        <td data-id="salud_fuera_pct_S36"></td>
-        <td data-id="salud_fuera_pct_S37"></td>
-            </tr>
-            <tr>
-        <td>VARIACIÓN</td>
-        <!-- ABRIL -->
-        <td data-id="salud_fuera_var_abr25"></td>
-        <td data-id="salud_fuera_var_S14"></td>
-        <td data-id="salud_fuera_var_S15"></td>
-        <td data-id="salud_fuera_var_S16"></td>
-        <td data-id="salud_fuera_var_S17"></td>
-        <td data-id="salud_fuera_var_S18"></td>
-        <!-- MAYO -->
-        <td data-id="salud_fuera_var_may25"></td>
-        <td data-id="salud_fuera_var_S19"></td>
-        <td data-id="salud_fuera_var_S20"></td>
-        <td data-id="salud_fuera_var_S21"></td>
-        <td data-id="salud_fuera_var_S22"></td>
-        <!-- JUNIO -->
-        <td data-id="salud_fuera_var_jun25"></td>
-        <td data-id="salud_fuera_var_S23"></td>
-        <td data-id="salud_fuera_var_S24"></td>
-        <td data-id="salud_fuera_var_S25"></td>
-        <td data-id="salud_fuera_var_S26"></td>
-        <td data-id="salud_fuera_var_S27"></td>
-        <!-- JULIO -->
-        <td data-id="salud_fuera_var_jul25"></td>
-        <td data-id="salud_fuera_var_S28"></td>
-        <td data-id="salud_fuera_var_S29"></td>
-        <td data-id="salud_fuera_var_S30"></td>
-        <td data-id="salud_fuera_var_S31"></td>
-        <td data-id="salud_fuera_var_S32"></td>
-        <!-- AGOSTO -->
-        <td data-id="salud_fuera_var_ago25"></td>
-        <td data-id="salud_fuera_var_S33"></td>
-        <td data-id="salud_fuera_var_S34"></td>
-        <td data-id="salud_fuera_var_S35"></td>
-        <td data-id="salud_fuera_var_S36"></td>
-        <td data-id="salud_fuera_var_S37"></td>
-            </tr>
-
-      <!-- Educación -->
+      <td>P2040</td>
+       <!-- Educación -->
       <tr>
         <td rowspan="4">EDUCACIÓN</td>
         <td rowspan="4">INSCRITOS CICLO ESCOLAR 25 - 26</td>
