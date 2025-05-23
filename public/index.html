@@ -1360,6 +1360,9 @@ thead th {
         <td data-id="salud_fuera_var_S36"></td>
         <td data-id="salud_fuera_var_S37"></td>
       </tr>
+      <td>P2040</td>
+      <!-- The previous <tr> was not closed, so close it here -->
+      </tr>
       <tr>
         <!-- Educación -->
         <td rowspan="4">EDUCACIÓN</td>
@@ -1399,7 +1402,7 @@ thead th {
         <td data-id="edu_u2040_S35"></td>
         <td data-id="edu_u2040_S36"></td>
         <td data-id="edu_u2040_S37"></td>
-            </tr>
+      </tr>
             <tr>
         <td>P2040</td>
         <!-- ABRIL -->
@@ -1787,41 +1790,35 @@ thead th {
       </tr>
   </tbody>
 </table>
-
-
 <script>
-const archivosPrincipales = ['/datos_iso_4c.csv', '/datos_educacion_4c.csv'];
-const archivosExtra = ['/datos_visitas_4c.csv', '/datos_indicadores_4c.csv', '/datos_vacunacion_4c.csv'];
-const diasLimite = 7;
+const archivos = ['/datos_indicadores_4c.csv', '/datos_educacion_4c.csv'];
 
-// Función reutilizable para procesar CSV ___funciona onooooooooo 23 may
-async function cargarCSV(url) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
-    const text = await response.text();
-    return text.trim().split('\n').slice(1);
-  } catch (err) {
-    console.warn('Error obteniendo CSV', url, err);
-    return [];
-  }
-}
+Promise.all(archivos.map(url => fetch(url).then(r => r.text())))
+  .then(results => {
+    console.log('✅ Ambos archivos cargados');
+    const lineas = results.flatMap(csv => csv.trim().split('\n').slice(1));
+    lineas.forEach(l => procesarFila(l));
+  });
 
-async function procesarArchivos() {
-  const resultados = await Promise.all(archivosPrincipales.map(cargarCSV));
-  resultados.flat().forEach(procesarFila);
-}
-
-function procesarFila(linea) {
-  const [id, , valor] = linea.split(',');
+function procesarFila(l) {
+  const [id, , valor] = l.split(',');
   const targets = document.querySelectorAll(`[data-id="${id}"]`);
   let display = valor;
   let clase = '';
 
-  const n = parseFloat(valor);
-  if (id.includes('pct') || id.includes('var')) display = `${n.toFixed(1)}%`;
-  if (id.includes('var')) clase = n < 0 ? 'rojo' : n === 0 ? 'amarillo' : n > 0.1 ? 'verde' : '';
-  if (id.includes('pct')) clase = n >= 90 ? 'verde' : n >= 60 ? 'amarillo' : 'rojo';
+  if (id.includes('pct') || id.includes('var')) display = parseFloat(valor).toFixed(1) + '%';
+  if (id.includes('var')) {
+    const n = parseFloat(valor);
+    clase = n < 0 ? 'rojo' : n === 0 ? 'amarillo' : n > 0.1 ? 'verde' : '';
+  }
+  if (id.includes('pct')) {
+    const n = parseFloat(valor);
+    if (!isNaN(n)) {
+      if (n >= 90) clase = 'verde';
+      else if (n >= 60) clase = 'amarillo';
+      else clase = 'rojo';
+    }
+  }
 
   targets.forEach(td => {
     td.textContent = display;
@@ -1829,41 +1826,209 @@ function procesarFila(linea) {
   });
 }
 
-// Mostrar alerta si el CSV está desactualizado
-async function verificarActualizacion() {
-  try {
-    const res = await fetch('datos_indicadores_4c', { method: 'HEAD' });
-    const fechaMod = new Date(res.headers.get('last-modified'));
-    const diasPasados = Math.floor((Date.now() - fechaMod) / (1000 * 60 * 60 * 24));
 
+// Banner de advertencia para saber si está esactualizado 23 mayoooooooooo//
+const diasLimite = 7;
+const archivosExtra = [
+  '/datos_visitas_4c.csv',
+  '/datos_indicadores_4c.csv',
+  '/datos_vacunacion_4c.csv',
+  '/datos_educacion_4c.csv',
+  '/datos_iso_4c.csv'
+];
+
+archivosExtra.forEach(url => {
+  fetch(url)
+    .then(response => {
+      if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const idIndex = headers.indexOf("indicador_id");
+      const valueIndex = headers.indexOf("valor");
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        const indicadorID = cols[idIndex];
+        let valor = parseFloat(cols[valueIndex]);
+        let display = valor;
+        let clase = '';
+        if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
+          display = valor.toFixed(1) + '%';
+        }
+        if (indicadorID && indicadorID.toLowerCase().includes("var")) {
+          if (valor < 0) clase = 'rojo';
+          else if (valor === 0) clase = 'amarillo';
+          else if (valor > 0.1) clase = 'verde';
+        }
+        const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+        targets.forEach(el => {
+          el.textContent = display;
+          if (clase) el.classList.add(clase);
+        });
+      }
+    })
+    .catch(err => {
+      console.warn('No se pudo obtener o procesar el archivo CSV', url, err);
+    });
+});
+
+fetch('datos_indicadores_4c', { method: 'HEAD' })
+  .then(res => {
+    const fechaStr = res.headers.get('last-modified');
+    const fechaMod = new Date(fechaStr);
+    const hoy = new Date();
+    const diasPasados = Math.floor((hoy - fechaMod) / (1000 * 60 * 60 * 24));
     if (diasPasados > diasLimite - 2) {
       const banner = document.createElement('div');
-      banner.style = `position: fixed; top: 0; left: 0; width: 100%; padding: 10px; color: black;
-                      font-weight: bold; font-size: 14px; text-align: center; z-index: 9999;
-                      background-color: ${diasPasados > diasLimite ? '#ff4d4d' : '#ffdd00'};`;
+      banner.style = `
+        position: fixed;
+        top: 0; left: 0; width: 100%;
+        padding: 10px;
+        color: black;
+        font-weight: bold;
+        font-size: 14px;
+        text-align: center;
+        z-index: 9999;
+        background-color: ${diasPasados > diasLimite ? '#ff4d4d' : '#ffdd00'};
+      `;
       banner.textContent = `⚠️ El archivo CSV fue modificado por última vez el ${fechaMod.toLocaleDateString()} (${diasPasados} días). Puede estar desactualizado.`;
       document.body.prepend(banner);
       document.body.style.paddingTop = '50px';
     }
-  } catch (err) {
-    console.warn('Error obteniendo fecha del archivo CSV', err);
+  })
+  .catch(err => {
+    console.warn('No se pudo obtener la fecha del archivo CSV', err);
+  });
+// Primer fetch: datos_iso_4c.csv (reglas propias, ya está en el código principal)
+
+
+fetch('/datos_educacion_4c.csv')
+  .then(response => {
+    if (!response.ok) throw new Error("Archivo CSV de educación no disponible");
+    return response.text();
+  })
+  .then(text => {
+    const lines = text.trim().split('\n');
+    const headers = lines[0].split(',');
+    const idIndex = headers.indexOf("indicador_id");
+    const valueIndex = headers.indexOf("valor");
+    for (let i = 1; i < lines.length; i++) {
+      const cols = lines[i].split(',');
+      const indicadorID = cols[idIndex];
+      let valor = parseFloat(cols[valueIndex]);
+      let display = valor;
+      let clase = '';
+      if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
+        display = valor.toFixed(1) + '%';
+      }
+      if (indicadorID && indicadorID.toLowerCase().includes("var")) {
+        if (valor < 0) clase = 'rojo';
+        else if (valor === 0) clase = 'amarillo';
+        else if (valor > 0.1) clase = 'verde';
+      }
+      const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+      targets.forEach(el => {
+        el.textContent = display;
+        if (clase) el.classList.add(clase);
+      });
+    }
+  })
+  .catch(err => {
+    console.warn('No se pudo obtener o procesar el archivo CSV de educación', err);
+  });
+  // Toggle por mes
+  function toggleMes(mes) {
+    document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
+      celda.classList.toggle('hidden');
+    });
   }
-}
 
-// Función para mostrar la semana actual
-function mostrarSemanaActual() {
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', () => toggleMes(header.dataset.mes));
+  });
+
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Calcular semana actual
   const today = new Date();
-  const semanaActual = Math.ceil(today.getDate() / 7);
-  const target = document.getElementById('semana_actual');
-  if (target) target.textContent = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
-}
+  const dia = today.getDate();
+  const semanaActual = Math.ceil(dia / 7);
 
-// Ejecutar procesos al cargar la página
-document.addEventListener('DOMContentLoaded', async () => {
-  await procesarArchivos();
-  await verificarActualizacion();
-  mostrarSemanaActual();
-});
+  fetch('/datos_iso_4c.csv')
+    .then(response => {
+      if (!response.ok) throw new Error("Archivo CSV no disponible");
+      return response.text();
+    })
+    .then(text => {
+      const lines = text.trim().split('\n');
+      const headers = lines[0].split(',');
+      const idIndex = headers.indexOf("indicador_id");
+      const valueIndex = headers.indexOf("valor");
+      const datosMap = new Map();
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = lines[i].split(',');
+        const indicadorID = cols[idIndex];
+        let valor = parseFloat(cols[valueIndex]);
+        let display = valor;
+        let clase = '';
+        if (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var")) {
+          display = valor.toFixed(1) + '%';
+        }
+        if (indicadorID.toLowerCase().includes("var")) {
+          if (valor < 0) clase = 'rojo';
+          else if (valor === 0) clase = 'amarillo';
+          else if (valor > 0.1) clase = 'verde';
+        }
+        datosMap.set(indicadorID, display);
+        const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+        targets.forEach(el => {
+          el.textContent = display;
+          if (clase) el.classList.add(clase);
+        });
+      }
+
+      // Ocultar encabezados mensuales si todas sus semanas están vacías
+      const meses = ['abr', 'may', 'jun', 'jul', 'ago'];
+      meses.forEach(mes => {
+        const semanas = document.querySelectorAll(`.semana-${mes}[data-id]`);
+        const algunaConDatos = Array.from(semanas).some(el => el.textContent.trim() !== '');
+        const thMes = document.querySelector(`th[data-mes="${mes}"]`);
+        if (thMes) thMes.style.display = algunaConDatos ? '' : 'none';
+        semanas.forEach(sem => {
+          sem.style.display = algunaConDatos ? '' : 'none';
+        });
+      });
+
+      // Ocultar celdas vacías sin valor
+      document.querySelectorAll('td[data-id]').forEach(td => {
+        if (td.textContent.trim() === '') {
+          td.style.display = 'none';
+        }
+      });
+
+      // Oculta semanas futuras automáticamente
+      document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
+        const match = celda.id.match(/_S(\d{2})$/);
+        if (match) {
+          const semana = parseInt(match[1], 10);
+          if (semana > semanaActual) {
+            celda.classList.add('hidden');
+          }
+        }
+      });
+
+      // Mostrar semana actual en encabezado
+      const label = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
+      const target = document.getElementById('semana_actual');
+      if (target) target.textContent = label;
+    })
+    .catch(err => {
+      console.warn('No se pudo obtener o procesar el archivo CSV', err);
+    });
 </script>
 <style>
   .rojo { color: red; font-weight: bold; }
@@ -1876,4 +2041,4 @@ document.addEventListener('DOMContentLoaded', async () => {
   ✅ Versión: <strong>PromiseAll 22/may/25</strong>
 </div>
 </body>
-</html>
+});
