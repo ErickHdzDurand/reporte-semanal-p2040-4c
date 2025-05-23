@@ -69,21 +69,6 @@
 }
   </style>
 </head>
-<!-- ✅ Sticky fix y toggle por mes -->
-<script>
-function toggleMes(mes) {
-  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
-    celda.classList.toggle('hidden');
-  });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('th[data-mes]').forEach(header => {
-    header.addEventListener('click', () => toggleMes(header.dataset.mes));
-  });
-});
-</script>
-
 <style>
 thead th {
   position: sticky;
@@ -1797,9 +1782,8 @@ Promise.all(archivos.map(url => fetch(url).then(r => r.text())))
   .then(results => {
     console.log('✅ Ambos archivos cargados');
     const lineas = results.flatMap(csv => csv.trim().split('\n').slice(1));
-    lineas.forEach(l => procesarFila(l));
-  });
-
+      lineas.forEach(l => procesarFila(l));
+    });
 function procesarFila(l) {
   const [id, , valor] = l.split(',');
   const targets = document.querySelectorAll(`[data-id="${id}"]`);
@@ -1824,6 +1808,11 @@ function procesarFila(l) {
     td.textContent = display;
     if (clase) td.classList.add(clase);
   });
+  const celda = document.querySelector(`td[data-id="${id}"]`);
+  if (celda) {
+    celda.textContent = display;
+    if (clase) celda.classList.add(clase);
+  }
 }
 
 
@@ -1940,14 +1929,16 @@ fetch('/datos_educacion_4c.csv')
   });
   // Toggle por mes
   function toggleMes(mes) {
-    document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
-      celda.classList.toggle('hidden');
-    });
-  }
+  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
+    celda.classList.toggle('hidden');
+  });
+}
 
+document.addEventListener('DOMContentLoaded', function () {
   document.querySelectorAll('th[data-mes]').forEach(header => {
     header.addEventListener('click', () => toggleMes(header.dataset.mes));
   });
+});
 
 </script>
 <script>
@@ -2029,6 +2020,8 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(err => {
       console.warn('No se pudo obtener o procesar el archivo CSV', err);
     });
+});
+
 </script>
 <style>
   .rojo { color: red; font-weight: bold; }
@@ -2041,4 +2034,6 @@ document.addEventListener('DOMContentLoaded', function() {
   ✅ Versión: <strong>PromiseAll 22/may/25</strong>
 </div>
 </body>
-});
+</html>
+<!DOCTYPE html>
+<html lang="es">
