@@ -1777,7 +1777,8 @@ thead th {
 </table>
 <script>
 const archivos = ['/datos_indicadores_4c.csv', '/datos_educacion_4c.csv'];
-
+// Cargar los archivos CSV
+// y procesar las filas
 Promise.all(archivos.map(url => fetch(url).then(r => r.text())))
   .then(results => {
     console.log('✅ Ambos archivos cargados');
@@ -1816,7 +1817,7 @@ function procesarFila(l) {
 }
 
 
-// Banner de advertencia para saber si está esactualizado 23 mayoooooooooo//
+// Banner de advertencia para saber si está esactualizado 23 mayoooaauauAAUooooooo//
 const diasLimite = 7;
 const archivosExtra = [
   '/datos_visitas_4c.csv',
@@ -1890,10 +1891,9 @@ fetch('datos_indicadores_4c', { method: 'HEAD' })
   .catch(err => {
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
-// Primer fetch: datos_iso_4c.csv (reglas propias, ya está en el código principal)
-
-
-fetch('/datos_educacion_4c.csv')
+// Primer fetch: pertenece a datos indicadores.csv (reglas propias, ya está en el código principal)
+// Segundo fetch: No lo localizo ya que no está en el código principal)
+fetch('/datos_indicadores_4c.csv')
   .then(response => {
     if (!response.ok) throw new Error("Archivo CSV de educación no disponible");
     return response.text();
