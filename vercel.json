@@ -18,6 +18,10 @@
       "src": "public/datos_vacunacion_4c.csv",
       "use": "@vercel/static"
     }
+    {
+      "src": "public/datos_personas_4c.csv",
+      "use": "@vercel/static"
+    }
   ],
   "routes": [
     {
@@ -27,6 +31,10 @@
     {
       "src": "/datos_educacion_4c.csv",
       "dest": "/public/datos_educacion_4c.csv"
+    },
+    {
+      "src": "/datos_personas_4c.csv",
+      "dest": "/public/datos_personas_4c.csv"
     },
    {
       "src": "/datos_vacunacion_4c.csv",
