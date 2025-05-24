@@ -17,7 +17,7 @@
     {
       "src": "public/datos_vacunacion_4c.csv",
       "use": "@vercel/static"
-    }
+    },
     {
       "src": "public/datos_personas_4c.csv",
       "use": "@vercel/static"
