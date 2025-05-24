@@ -11,6 +11,10 @@
       "use": "@vercel/static"
     },
     {
+      "src": "public/datos_educacion_4c.csv",
+      "use": "@vercel/static"
+    },
+    {
       "src": "public/datos_vacunacion_4c.csv",
       "use": "@vercel/static"
     }
@@ -21,6 +25,10 @@
       "dest": "/public/datos_indicadores_4c.csv"
     },
     {
+      "src": "/datos_educacion_4c.csv",
+      "dest": "/public/datos_educacion_4c.csv"
+    },
+   {
       "src": "/datos_vacunacion_4c.csv",
       "dest": "/public/datos_vacunacion_4c.csv"
     }
