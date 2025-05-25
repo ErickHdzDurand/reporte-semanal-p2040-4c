@@ -1674,7 +1674,7 @@ function procesarFila(l) {
 }
 
 
-// Banner de advertencia pse agregan los distintos archivos 2323mayoooaauauAAUooooooo//
+// Banner de advertencia pse agregan los distintos archivos 25 MAYINBOOOO//
 const diasLimite = 7;
 const archivosExtra = [
   '/datos_visitas_4c.csv',
@@ -1750,7 +1750,7 @@ fetch('datos_indicadores_4c', { method: 'HEAD' })
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
 // Primer fetch: pertenece a datos indicadores.csv (reglas propias, ya está en el código principal)
-// Segundo fetch: No lo localizo ya que no está en el código principal)
+
 fetch('/datos_indicadores_4c.csv')
   .then(response => {
     if (!response.ok) throw new Error("Archivo CSV de educación no disponible");
@@ -1840,7 +1840,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
       }
 
-      // Ocultar encabezados mensuales si todas sus semanas están vacías
+      // Ocultar encabezados mensuales si las semnas están vacías
       const meses = ['abr', 'may', 'jun', 'jul', 'ago'];
       meses.forEach(mes => {
         const semanas = document.querySelectorAll(`.semana-${mes}[data-id]`);
@@ -1889,7 +1889,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 <!-- 🧪 Commit técnico: Versión /public -->
  <div id="verificacion-version" style="position:fixed;bottom:10px;right:10px;z-index:9999;padding:4px 12px;background:#111;color:#0f0;font-size:11px;border-radius:6px;box-shadow:0 0 4px #000;">
-  ✅ Versión: <strong>PromiseAll 22/may/25</strong>
+  ✅ Versión: <strong>PromiseAll 25/may/25</strong>
 </div>
 </body>
 </html>
