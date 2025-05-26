@@ -1,24 +1,3 @@
 {
-  "version": 2,
-  "public": true,
-  "builds": [
-    {
-      "src": "public/index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "public/datos_todos_4c.csv",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/",
-      "dest": "/public/index.html"
-    },
-    {
-      "src": "/datos_todos_4c.csv",
-      "dest": "/public/datos_todos_4c.csv"
-    }
-  ]
+  "version": 2
 }
