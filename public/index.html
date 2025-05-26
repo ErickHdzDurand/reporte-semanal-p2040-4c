@@ -1650,27 +1650,32 @@ if (typeof archivosExtra !== 'undefined') {
         const headers = lines[0].split(',');
         const idIndex = headers.indexOf("indicador_id");
         const valueIndex = headers.indexOf("valor");
+
         for (let i = 1; i < lines.length; i++) {
           const cols = lines[i].split(',');
           const indicadorID = cols[idIndex];
           let valor = parseFloat(cols[valueIndex]);
           let display = valor;
           let clase = '';
+
           if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
             display = valor.toFixed(1) + '%';
           }
+
           if (indicadorID && indicadorID.toLowerCase().includes("var")) {
             if (valor < 0) clase = 'rojo';
             else if (valor === 0) clase = 'amarillo';
             else if (valor > 0.1) clase = 'verde';
           }
-          const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+
+          // ✅ Cambiado: ahora busca también por atributo id
+          const targets = document.querySelectorAll(`[data-id="${indicadorID}"], [id="${indicadorID}"]`);
           targets.forEach(el => {
             el.textContent = display;
             if (clase) el.classList.add(clase);
           });
         }
-      })
+      })  // <-- FALTABA ESTE PARENTESIS
       .catch(err => {
         console.warn('No se pudo obtener o procesar el archivo CSV', url, err);
       });
@@ -1712,6 +1717,15 @@ function toggleMes(mes) {
   });
 }
 
+// Agregar evento click a los encabezados de mes
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', function() {
+      toggleMes(header.getAttribute('data-mes'));
+    });
+  });
+});
+
 // DOMContentLoaded para semana actual y ocultar semanas futuras
 document.addEventListener('DOMContentLoaded', function() {
   // Calcular semana actual
@@ -1749,5 +1763,3 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="es">
