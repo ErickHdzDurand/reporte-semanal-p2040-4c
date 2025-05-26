@@ -1,10 +1,4 @@
 {
   "version": 2,
-  "public": true,
-  "rewrites": [
-    {
-      "source": "/datos_todos_4c.csv",
-      "destination": "/public/datos_todos_4c.csv"
-    }
-  ]
+  "public": true
 }
