@@ -1712,6 +1712,15 @@ function toggleMes(mes) {
   });
 }
 
+// Agregar evento click a los encabezados de mes
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', function() {
+      toggleMes(header.getAttribute('data-mes'));
+    });
+  });
+});
+
 // DOMContentLoaded para semana actual y ocultar semanas futuras
 document.addEventListener('DOMContentLoaded', function() {
   // Calcular semana actual
