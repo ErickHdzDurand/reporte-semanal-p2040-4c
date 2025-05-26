@@ -1681,7 +1681,7 @@ if (typeof archivosExtra !== 'undefined') {
       });
   });
 }
-
+// <-- SECCIÓN DEL FETCH ÚNICO 26/05/2025
 fetch('/datos_todos_4c.csv', { method: 'HEAD' })
   .then(res => {
     const fechaStr = res.headers.get('last-modified');
