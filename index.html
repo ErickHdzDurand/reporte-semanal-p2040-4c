@@ -89,43 +89,43 @@ thead th {
       <th data-mes="abr">Abr-25</th>
      <!-- ABRIL -->
     <th data-mes="abr">Abr-25</th>
-    <th class="semana semana-abr hidden" data-id="semana_S14">S14</th>
-    <th class="semana semana-abr hidden" data-id="semana_S15">S15</th>
-    <th class="semana semana-abr hidden" data-id="semana_S16">S16</th>
-    <th class="semana semana-abr hidden" data-id="semana_S17">S17</th>
-    <th class="semana semana-abr hidden" data-id="semana_S18">S18</th>
+    <th class="semana semana-abr" data-id="semana_S14">S14</th>
+    <th class="semana semana-abr" data-id="semana_S15">S15</th>
+    <th class="semana semana-abr" data-id="semana_S16">S16</th>
+    <th class="semana semana-abr" data-id="semana_S17">S17</th>
+    <th class="semana semana-abr" data-id="semana_S18">S18</th>
 
     <!-- MAYO -->
     <th data-mes="may">May-25</th>
-    <th class="semana semana-may hidden" data-id="semana_S19">S19</th>
-    <th class="semana semana-may hidden" data-id="semana_S20">S20</th>
-    <th class="semana semana-may hidden" data-id="semana_S21">S21</th>
-    <th class="semana semana-may hidden" data-id="semana_S22">S22</th>
+    <th class="semana semana-may" data-id="semana_S19">S19</th>
+    <th class="semana semana-may" data-id="semana_S20">S20</th>
+    <th class="semana semana-may" data-id="semana_S21">S21</th>
+    <th class="semana semana-may" data-id="semana_S22">S22</th>
 
     <!-- JUNIO -->
     <th data-mes="jun">Jun-25</th>
-    <th class="semana semana-jun hidden" data-id="semana_S23">S23</th>
-    <th class="semana semana-jun hidden" data-id="semana_S24">S24</th>
-    <th class="semana semana-jun hidden" data-id="semana_S25">S25</th>
-    <th class="semana semana-jun hidden" data-id="semana_S26">S26</th>
-    <th class="semana semana-jun hidden" data-id="semana_S27">S27</th>
+    <th class="semana semana-jun" data-id="semana_S23">S23</th>
+    <th class="semana semana-jun" data-id="semana_S24">S24</th>
+    <th class="semana semana-jun" data-id="semana_S25">S25</th>
+    <th class="semana semana-jun" data-id="semana_S26">S26</th>
+    <th class="semana semana-jun" data-id="semana_S27">S27</th>
 
     <!-- JULIO -->
     <th data-mes="jul">Jul-25</th>
-    <th class="semana semana-jul hidden" data-id="semana_S28">S28</th>
-    <th class="semana semana-jul hidden" data-id="semana_S29">S29</th>
-    <th class="semana semana-jul hidden" data-id="semana_S30">S30</th>
-    <th class="semana semana-jul hidden" data-id="semana_S31">S31</th>
+    <th class="semana semana-jul" data-id="semana_S28">S28</th>
+    <th class="semana semana-jul" data-id="semana_S29">S29</th>
+    <th class="semana semana-jul" data-id="semana_S30">S30</th>
+    <th class="semana semana-jul" data-id="semana_S31">S31</th>
 
     <!-- AGOSTO -->
     <th data-mes="ago">Ago-25</th>
-    <th class="semana semana-ago hidden" data-id="semana_S32">S32</th>
-    <th class="semana semana-ago hidden" data-id="semana_S33">S33</th>
-    <th class="semana semana-ago hidden" data-id="semana_S34">S34</th>
-    <th class="semana semana-ago hidden" data-id="semana_S35">S35</th>
-  </tr>
-</thead>
-  <tbody>
+    <th class="semana semana-ago" data-id="semana_S32">S32</th>
+    <th class="semana semana-ago" data-id="semana_S33">S33</th>
+    <th class="semana semana-ago" data-id="semana_S34">S34</th>
+    <th class="semana semana-ago" data-id="semana_S35">S35</th>
+    </tr>
+  </thead>
+    <tbody>
     <tr>
       <td colspan="3">UNIVERSO P2040</td>
       <!-- ABRIL -->
@@ -1724,6 +1724,12 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleMes(header.getAttribute('data-mes'));
     });
   });
+
+  // REGLA: Mostrar todos los meses desplegados al cargar
+  // Quita la clase 'hidden' de todas las celdas de semanas de todos los meses
+  document.querySelectorAll('[class*="semana-"]').forEach(celda => {
+    celda.classList.remove('hidden');
+  });
 });
 
 // DOMContentLoaded para semana actual y ocultar semanas futuras
@@ -1749,17 +1755,3 @@ document.addEventListener('DOMContentLoaded', function() {
   const target = document.getElementById('semana_actual');
   if (target) target.textContent = label;
 });
-
-</script>
-<style>
-  .rojo { color: red; font-weight: bold; }
-  .amarillo { color: orange; font-weight: bold; }
-  .verde { color: green; font-weight: bold; }
-  .hidden { display: none; }
-</style>
-<!-- 🧪 Commit técnico: Versión /public -->
- <div id="verificacion-version" style="position:fixed;bottom:10px;right:10px;z-index:9999;padding:4px 12px;background:#111;color:#0f0;font-size:11px;border-radius:6px;box-shadow:0 0 4px #000;">
-  ✅ Versión: <strong>PromiseAll 25/may/25</strong>
-</div>
-</body>
-</html>
