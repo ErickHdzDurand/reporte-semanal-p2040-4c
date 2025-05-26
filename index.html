@@ -1685,24 +1685,28 @@ function procesarCSV(text) {
   const valueIndex = headers.indexOf("valor");
 
   lines.slice(1).forEach(line => {
-    const cols = line.split(',');
-    const indicadorID = cols[idIndex];
-    let valor = parseFloat(cols[valueIndex]);
-    let display = valor, clase = '';
+  const cols = line.split(',');
+  const indicadorID = cols[idIndex];
+  const rawValor = cols[valueIndex];
+  if (!rawValor || rawValor.trim() === "") return;
 
-    if (indicadorID?.toLowerCase().includes("pct") || indicadorID?.toLowerCase().includes("var")) {
-      display = `${valor.toFixed(1)}%`;
-    }
+  let valor = parseFloat(rawValor);
+  let display = valor, clase = '';
 
-    if (indicadorID?.toLowerCase().includes("var")) {
-      clase = valor < 0 ? 'rojo' : valor === 0 ? 'amarillo' : valor > 0.1 ? 'verde' : '';
-    }
+  if (indicadorID?.toLowerCase().includes("pct") || indicadorID?.toLowerCase().includes("var")) {
+    display = `${valor.toFixed(1)}%`;
+  }
 
-    document.querySelectorAll(`[data-id="${indicadorID}"], [id="${indicadorID}"]`).forEach(el => {
-      el.textContent = display;
-      if (clase) el.classList.add(clase);
-    });
+  if (indicadorID?.toLowerCase().includes("var")) {
+    clase = valor < 0 ? 'rojo' : valor === 0 ? 'amarillo' : valor > 0.1 ? 'verde' : '';
+  }
+
+  document.querySelectorAll(`[data-id="${indicadorID}"], [id="${indicadorID}"]`).forEach(el => {
+    el.textContent = display;
+    if (clase) el.classList.add(clase);
   });
+});
+
 }
 
 // 📅 Ocultar semanas futuras y mostrar semana actual
