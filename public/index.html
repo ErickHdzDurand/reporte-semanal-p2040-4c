@@ -1633,96 +1633,51 @@ thead th {
   </tbody>
 </table>
 <script>
-const archivos = ['/datos_indicadores_4c.csv', '/datos_educacion_4c.csv'];
-// Cargar los archivos CSV
-// y procesar las filas
-Promise.all(archivos.map(url => fetch(url).then(r => r.text())))
-  .then(results => {
-    console.log('✅ Ambos archivos cargados');
-    const lineas = results.flatMap(csv => csv.trim().split('\n').slice(1));
-      lineas.forEach(l => procesarFila(l));
-    });
-function procesarFila(l) {
-  const [id, , valor] = l.split(',');
-  const targets = document.querySelectorAll(`[data-id="${id}"]`);
-  let display = valor;
-  let clase = '';
-
-  if (id.includes('pct') || id.includes('var')) display = parseFloat(valor).toFixed(1) + '%';
-  if (id.includes('var')) {
-    const n = parseFloat(valor);
-    clase = n < 0 ? 'rojo' : n === 0 ? 'amarillo' : n > 0.1 ? 'verde' : '';
-  }
-  if (id.includes('pct')) {
-    const n = parseFloat(valor);
-    if (!isNaN(n)) {
-      if (n >= 90) clase = 'verde';
-      else if (n >= 60) clase = 'amarillo';
-      else clase = 'rojo';
-    }
-  }
-
-  targets.forEach(td => {
-    td.textContent = display;
-    if (clase) td.classList.add(clase);
-  });
-  const celda = document.querySelector(`td[data-id="${id}"]`);
-  if (celda) {
-    celda.textContent = display;
-    if (clase) celda.classList.add(clase);
-  }
-}
-
 
 // Banner de advertencia pse agregan los distintos archivos 25 MAYINBOOOO//
 const diasLimite = 7;
-const archivosExtra = [
-  '/datos_visitas_4c.csv',
-  '/datos_indicadores_4c.csv',
-  '/datos_vacunacion_4c.csv',
-  '/datos_personas_4c.csv',
-  '/datos_educacion_4c.csv',
-  '/datos_iso_4c.csv'
-];
 
-archivosExtra.forEach(url => {
-  fetch(url)
-    .then(response => {
-      if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
-      return response.text();
-    })
-    .then(text => {
-      const lines = text.trim().split('\n');
-      const headers = lines[0].split(',');
-      const idIndex = headers.indexOf("indicador_id");
-      const valueIndex = headers.indexOf("valor");
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',');
-        const indicadorID = cols[idIndex];
-        let valor = parseFloat(cols[valueIndex]);
-        let display = valor;
-        let clase = '';
-        if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
-          display = valor.toFixed(1) + '%';
+// Suponiendo que archivosExtra está definido en otro lugar
+if (typeof archivosExtra !== 'undefined') {
+  archivosExtra.forEach(url => {
+    fetch(url)
+      .then(response => {
+        if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
+        return response.text();
+      })
+      .then(text => {
+        const lines = text.trim().split('\n');
+        const headers = lines[0].split(',');
+        const idIndex = headers.indexOf("indicador_id");
+        const valueIndex = headers.indexOf("valor");
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(',');
+          const indicadorID = cols[idIndex];
+          let valor = parseFloat(cols[valueIndex]);
+          let display = valor;
+          let clase = '';
+          if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
+            display = valor.toFixed(1) + '%';
+          }
+          if (indicadorID && indicadorID.toLowerCase().includes("var")) {
+            if (valor < 0) clase = 'rojo';
+            else if (valor === 0) clase = 'amarillo';
+            else if (valor > 0.1) clase = 'verde';
+          }
+          const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
+          targets.forEach(el => {
+            el.textContent = display;
+            if (clase) el.classList.add(clase);
+          });
         }
-        if (indicadorID && indicadorID.toLowerCase().includes("var")) {
-          if (valor < 0) clase = 'rojo';
-          else if (valor === 0) clase = 'amarillo';
-          else if (valor > 0.1) clase = 'verde';
-        }
-        const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
-        targets.forEach(el => {
-          el.textContent = display;
-          if (clase) el.classList.add(clase);
-        });
-      }
-    })
-    .catch(err => {
-      console.warn('No se pudo obtener o procesar el archivo CSV', url, err);
-    });
-});
+      })
+      .catch(err => {
+        console.warn('No se pudo obtener o procesar el archivo CSV', url, err);
+      });
+  });
+}
 
-fetch('datos_indicadores_4c', { method: 'HEAD' })
+fetch('/datos_todos_4c.csv', { method: 'HEAD' })
   .then(res => {
     const fechaStr = res.headers.get('last-modified');
     const fechaMod = new Date(fechaStr);
@@ -1749,135 +1704,36 @@ fetch('datos_indicadores_4c', { method: 'HEAD' })
   .catch(err => {
     console.warn('No se pudo obtener la fecha del archivo CSV', err);
   });
-// Primer fetch: pertenece a datos indicadores.csv (reglas propias, ya está en el código principal)
 
-fetch('/datos_indicadores_4c.csv')
-  .then(response => {
-    if (!response.ok) throw new Error("Archivo CSV de educación no disponible");
-    return response.text();
-  })
-  .then(text => {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-    const idIndex = headers.indexOf("indicador_id");
-    const valueIndex = headers.indexOf("valor");
-    for (let i = 1; i < lines.length; i++) {
-      const cols = lines[i].split(',');
-      const indicadorID = cols[idIndex];
-      let valor = parseFloat(cols[valueIndex]);
-      let display = valor;
-      let clase = '';
-      if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
-        display = valor.toFixed(1) + '%';
-      }
-      if (indicadorID && indicadorID.toLowerCase().includes("var")) {
-        if (valor < 0) clase = 'rojo';
-        else if (valor === 0) clase = 'amarillo';
-        else if (valor > 0.1) clase = 'verde';
-      }
-      const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
-      targets.forEach(el => {
-        el.textContent = display;
-        if (clase) el.classList.add(clase);
-      });
-    }
-  })
-  .catch(err => {
-    console.warn('No se pudo obtener o procesar el archivo CSV de educación', err);
-  });
-  // Toggle por mes
-  function toggleMes(mes) {
+// Toggle por mes
+function toggleMes(mes) {
   document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
     celda.classList.toggle('hidden');
   });
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('th[data-mes]').forEach(header => {
-    header.addEventListener('click', () => toggleMes(header.dataset.mes));
-  });
-});
-
-</script>
-<script>
+// DOMContentLoaded para semana actual y ocultar semanas futuras
 document.addEventListener('DOMContentLoaded', function() {
   // Calcular semana actual
   const today = new Date();
   const dia = today.getDate();
   const semanaActual = Math.ceil(dia / 7);
 
-  fetch('/datos_iso_4c.csv')
-    .then(response => {
-      if (!response.ok) throw new Error("Archivo CSV no disponible");
-      return response.text();
-    })
-    .then(text => {
-      const lines = text.trim().split('\n');
-      const headers = lines[0].split(',');
-      const idIndex = headers.indexOf("indicador_id");
-      const valueIndex = headers.indexOf("valor");
-      const datosMap = new Map();
-
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(',');
-        const indicadorID = cols[idIndex];
-        let valor = parseFloat(cols[valueIndex]);
-        let display = valor;
-        let clase = '';
-        if (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var")) {
-          display = valor.toFixed(1) + '%';
-        }
-        if (indicadorID.toLowerCase().includes("var")) {
-          if (valor < 0) clase = 'rojo';
-          else if (valor === 0) clase = 'amarillo';
-          else if (valor > 0.1) clase = 'verde';
-        }
-        datosMap.set(indicadorID, display);
-        const targets = document.querySelectorAll(`[data-id="${indicadorID}"]`);
-        targets.forEach(el => {
-          el.textContent = display;
-          if (clase) el.classList.add(clase);
-        });
+  // Oculta semanas futuras automáticamente
+  document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
+    const match = celda.id && celda.id.match(/_S(\d{2})$/);
+    if (match) {
+      const semana = parseInt(match[1], 10);
+      if (semana > semanaActual) {
+        celda.classList.add('hidden');
       }
+    }
+  });
 
-      // Ocultar encabezados mensuales si las semnas están vacías
-      const meses = ['abr', 'may', 'jun', 'jul', 'ago'];
-      meses.forEach(mes => {
-        const semanas = document.querySelectorAll(`.semana-${mes}[data-id]`);
-        const algunaConDatos = Array.from(semanas).some(el => el.textContent.trim() !== '');
-        const thMes = document.querySelector(`th[data-mes="${mes}"]`);
-        if (thMes) thMes.style.display = algunaConDatos ? '' : 'none';
-        semanas.forEach(sem => {
-          sem.style.display = algunaConDatos ? '' : 'none';
-        });
-      });
-
-      // Ocultar celdas vacías sin valor
-      document.querySelectorAll('td[data-id]').forEach(td => {
-        if (td.textContent.trim() === '') {
-          td.style.display = 'none';
-        }
-      });
-
-      // Oculta semanas futuras automáticamente
-      document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
-        const match = celda.id.match(/_S(\d{2})$/);
-        if (match) {
-          const semana = parseInt(match[1], 10);
-          if (semana > semanaActual) {
-            celda.classList.add('hidden');
-          }
-        }
-      });
-
-      // Mostrar semana actual en encabezado
-      const label = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
-      const target = document.getElementById('semana_actual');
-      if (target) target.textContent = label;
-    })
-    .catch(err => {
-      console.warn('No se pudo obtener o procesar el archivo CSV', err);
-    });
+  // Mostrar semana actual en encabezado
+  const label = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
+  const target = document.getElementById('semana_actual');
+  if (target) target.textContent = label;
 });
 
 </script>
