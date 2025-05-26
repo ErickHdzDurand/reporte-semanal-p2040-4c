@@ -1634,124 +1634,108 @@ thead th {
 </table>
 <script>
 
-// Banner de advertencia pse agregan los distintos archivos 26 MAYINBO000OOO//
+// ⚠️ Banner de advertencia si el archivo CSV está desactualizado
 const diasLimite = 7;
 
-// Suponiendo que archivosExtra está definido en otro lugar
-if (typeof archivosExtra !== 'undefined') {
-  archivosExtra.forEach(url => {
-    fetch(url)
-      .then(response => {
-        if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
-        return response.text();
-      })
-      .then(text => {
-        const lines = text.trim().split('\n');
-        const headers = lines[0].split(',');
-        const idIndex = headers.indexOf("indicador_id");
-        const valueIndex = headers.indexOf("valor");
+function verificarFechaArchivo() {
+  fetch('/datos_todos_4c.csv', { method: 'HEAD' })
+    .then(res => {
+      const fechaStr = res.headers.get('last-modified');
+      const fechaMod = new Date(fechaStr);
+      const hoy = new Date();
+      const diasPasados = Math.floor((hoy - fechaMod) / (1000 * 60 * 60 * 24));
 
-        for (let i = 1; i < lines.length; i++) {
-          const cols = lines[i].split(',');
-          const indicadorID = cols[idIndex];
-          let valor = parseFloat(cols[valueIndex]);
-          let display = valor;
-          let clase = '';
-
-          if (indicadorID && (indicadorID.toLowerCase().includes("pct") || indicadorID.toLowerCase().includes("var"))) {
-            display = valor.toFixed(1) + '%';
-          }
-
-          if (indicadorID && indicadorID.toLowerCase().includes("var")) {
-            if (valor < 0) clase = 'rojo';
-            else if (valor === 0) clase = 'amarillo';
-            else if (valor > 0.1) clase = 'verde';
-          }
-
-          // ✅ Cambiado: ahora busca también por atributo id
-          const targets = document.querySelectorAll(`[data-id="${indicadorID}"], [id="${indicadorID}"]`);
-          targets.forEach(el => {
-            el.textContent = display;
-            if (clase) el.classList.add(clase);
-          });
-        }
-      })  // <-- FALTABA ESTE PARENTESIS
-      .catch(err => {
-        console.warn('No se pudo obtener o procesar el archivo CSV', url, err);
-      });
-  });
+      if (diasPasados > diasLimite - 2) {
+        const banner = document.createElement('div');
+        banner.style = `
+          position: fixed;
+          top: 0; left: 0; width: 100%;
+          padding: 10px; color: black;
+          font-weight: bold; font-size: 14px;
+          text-align: center; z-index: 9999;
+          background-color: ${diasPasados > diasLimite ? '#ff4d4d' : '#ffdd00'};
+        `;
+        banner.textContent = `⚠️ El archivo CSV fue modificado el ${fechaMod.toLocaleDateString()} (${diasPasados} días). Puede estar desactualizado.`;
+        document.body.prepend(banner);
+        document.body.style.paddingTop = '50px';
+      }
+    })
+    .catch(err => console.warn('No se pudo obtener la fecha del archivo CSV', err));
 }
-// <-- SECCIÓN DEL FETCH ÚNICO 26/05/2025
-fetch('/datos_todos_4c.csv', { method: 'HEAD' })
-  .then(res => {
-    const fechaStr = res.headers.get('last-modified');
-    const fechaMod = new Date(fechaStr);
-    const hoy = new Date();
-    const diasPasados = Math.floor((hoy - fechaMod) / (1000 * 60 * 60 * 24));
-    if (diasPasados > diasLimite - 2) {
-      const banner = document.createElement('div');
-      banner.style = `
-        position: fixed;
-        top: 0; left: 0; width: 100%;
-        padding: 10px;
-        color: black;
-        font-weight: bold;
-        font-size: 14px;
-        text-align: center;
-        z-index: 9999;
-        background-color: ${diasPasados > diasLimite ? '#ff4d4d' : '#ffdd00'};
-      `;
-      banner.textContent = `⚠️ El archivo CSV fue modificado por última vez el ${fechaMod.toLocaleDateString()} (${diasPasados} días). Puede estar desactualizado.`;
-      document.body.prepend(banner);
-      document.body.style.paddingTop = '50px';
+
+// 🔄 Carga de datos desde múltiples archivos
+function cargarDatos() {
+  if (typeof archivosExtra !== 'undefined') {
+    archivosExtra.forEach(url => {
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error(`Archivo CSV no disponible: ${url}`);
+          return response.text();
+        })
+        .then(text => procesarCSV(text))
+        .catch(err => console.warn(`Error al procesar CSV ${url}:`, err));
+    });
+  }
+}
+
+// 📊 Procesamiento de archivos CSV
+function procesarCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',');
+  const idIndex = headers.indexOf("indicador_id");
+  const valueIndex = headers.indexOf("valor");
+
+  lines.slice(1).forEach(line => {
+    const cols = line.split(',');
+    const indicadorID = cols[idIndex];
+    let valor = parseFloat(cols[valueIndex]);
+    let display = valor, clase = '';
+
+    if (indicadorID?.toLowerCase().includes("pct") || indicadorID?.toLowerCase().includes("var")) {
+      display = `${valor.toFixed(1)}%`;
     }
-  })
-  .catch(err => {
-    console.warn('No se pudo obtener la fecha del archivo CSV', err);
-  });
 
-// Toggle por mes
-function toggleMes(mes) {
-  document.querySelectorAll(`.semana-${mes}`).forEach(celda => {
-    celda.classList.toggle('hidden');
-  });
-}
+    if (indicadorID?.toLowerCase().includes("var")) {
+      clase = valor < 0 ? 'rojo' : valor === 0 ? 'amarillo' : valor > 0.1 ? 'verde' : '';
+    }
 
-// Agregar evento click a los encabezados de mes
-document.addEventListener('DOMContentLoaded', function() {
-  document.querySelectorAll('th[data-mes]').forEach(header => {
-    header.addEventListener('click', function() {
-      toggleMes(header.getAttribute('data-mes'));
+    document.querySelectorAll(`[data-id="${indicadorID}"], [id="${indicadorID}"]`).forEach(el => {
+      el.textContent = display;
+      if (clase) el.classList.add(clase);
     });
   });
+}
 
-  // REGLA: Mostrar todos los meses desplegados al cargar
-  // Quita la clase 'hidden' de todas las celdas de semanas de todos los meses
-  document.querySelectorAll('[class*="semana-"]').forEach(celda => {
-    celda.classList.remove('hidden');
-  });
-});
-
-// DOMContentLoaded para semana actual y ocultar semanas futuras
-document.addEventListener('DOMContentLoaded', function() {
-  // Calcular semana actual
+// 📅 Ocultar semanas futuras y mostrar semana actual
+function gestionarSemanas() {
   const today = new Date();
   const dia = today.getDate();
   const semanaActual = Math.ceil(dia / 7);
 
-  // Oculta semanas futuras automáticamente
   document.querySelectorAll('[id$="_S15"], [id$="_S16"], [id$="_S17"], [id$="_S18"], [id$="_S19"], [id$="_S20"], [id$="_S21"], [id$="_S22"], [id$="_S23"], [id$="_S24"], [id$="_S25"], [id$="_S26"], [id$="_S27"]').forEach(celda => {
-    const match = celda.id && celda.id.match(/_S(\d{2})$/);
-    if (match) {
-      const semana = parseInt(match[1], 10);
-      if (semana > semanaActual) {
-        celda.classList.add('hidden');
-      }
-    }
+    const semana = parseInt(celda.id.match(/_S(\d{2})$/)?.[1], 10);
+    if (semana > semanaActual) celda.classList.add('hidden');
   });
 
-  // Mostrar semana actual en encabezado
-  const label = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
-  const target = document.getElementById('semana_actual');
-  if (target) target.textContent = label;
+  document.getElementById('semana_actual')?.textContent = `Semana actual: S0${semanaActual} (${today.toLocaleDateString('es-MX')})`;
+}
+
+// 📌 Toggle para meses
+function toggleMes(mes) {
+  document.querySelectorAll(`.semana-${mes}`).forEach(celda => celda.classList.toggle('hidden'));
+}
+
+// ⏳ Inicialización: Se ejecuta solo una vez al cargar la página
+document.addEventListener('DOMContentLoaded', () => {
+  verificarFechaArchivo();
+  cargarDatos();
+  gestionarSemanas();
+
+  document.querySelectorAll('th[data-mes]').forEach(header => {
+    header.addEventListener('click', () => toggleMes(header.getAttribute('data-mes')));
+  });
+
+  document.querySelectorAll('[class*="semana-"]').forEach(celda => {
+    celda.classList.remove('hidden');
+  });
 });
