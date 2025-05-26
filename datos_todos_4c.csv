@@ -1,4 +1,8 @@
 ﻿indicador_id,periodo,valor,semana_inicio
+U2040_S17,S17,1391,28/04/2025
+U2040_S18,S18,1391,05/05/2025
+U2040_S19,S19,1392,12/05/2025
+U2040_S20,S20,1402,19/05/2025
 edu_inscritos_var_S13,S13,,24/03/2025
 edu_inscritos_p2040_S13,S13,0,24/03/2025
 edu_u2040_S13,S13,242,24/03/2025
@@ -83,10 +87,6 @@ salud_vacunacion_var_S17,S17,,28/04/2025
 salud_vacunacion_var_S18,S18,0,05/05/2025
 salud_vacunacion_var_S19,S19,-0.1,12/05/2025
 salud_vacunacion_var_S20,S20,0.3,19/05/2025
-U2040_S17,S17,1391,28/04/2025
-U2040_S18,S18,1391,05/05/2025
-U2040_S19,S19,1392,12/05/2025
-U2040_S20,S20,1402,19/05/2025
 salud_medicion_total_may25,may-25,462,19/05/2025
 salud_medicion_var_S16,S16,-0.1,21/04/2025
 esp_consagracion_sc_pct_S49,S49,63.2,09/12/2024
